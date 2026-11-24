@@ -1,191 +1,77 @@
-# App Service Builder: ASP.NET HTTP sample
+# 오늘의 대한민국
 
-A standalone, minimal ASP.NET app for learning how to deploy committed GitHub
-source with [App Service Builder](https://builder.appservice.azure.com/docs/). The app
-targets .NET 10 and has no NuGet package dependencies.
+대한민국 17개 광역자치단체의 오늘 날씨와 주요 8개 통화의 원화 환율을 제공하는
+반응형 ASP.NET 웹 애플리케이션입니다. 브라우저 화면과 JSON API를 같은 서버에서
+제공하며, 날씨와 환율 정보는 각각 Open-Meteo와 Frankfurter에서 가져옵니다.
 
-## Preview
+## 주요 기능
 
-The visual workbench is served directly at `/`, without a redirect.
+- 전국 17개 시·도의 대표 도시별 현재 기온, 최고/최저 기온, 강수 확률, 습도, 풍속
+- USD, EUR, JPY, CNY, GBP, AUD, CAD, CHF의 원화 환율
+- 지역 검색, 원화-외화 환율 계산기, 새로고침 및 부분 장애 안내
+- 모바일부터 데스크톱까지 반응하는 접근 가능한 단일 페이지
+- .NET 서버 캐시: 날씨 10분, 환율 30분
+- 외부 API 키나 NuGet 패키지 없이 실행
 
-![The daylight .NET root workbench with official logo, public greeting, runtime facts, and inline HTTP request controls](docs/images/sample.png)
+## 엔드포인트
 
-Real local rendering in Microsoft Edge, not evidence of an Azure deployment.
-ASP.NET documentation is separate from Builder documentation. **Customize the
-public greeting** discloses the source variable `SAMPLE_GREETING`; it does not
-infer your fork or edit your deployment.
+| 메서드 | 경로 | 응답 |
+| --- | --- | --- |
+| `GET` | `/` | 반응형 날씨·환율 대시보드 |
+| `GET` | `/api/dashboard` | 날씨와 환율 통합 JSON |
+| `GET` | `/api/weather` | 전국 날씨 JSON |
+| `GET` | `/api/exchange-rates` | 주요 통화 환율 JSON |
+| `GET` | `/health` | `OK`와 줄바꿈 |
 
-**App Service Builder is in Private Preview. Use this sample for development and
-testing, not production.** Local validation does not establish preview runtime
-availability or end-to-end deployment readiness. A live preview deployment of
-this sample has not been qualified.
+통합 API는 두 데이터 소스가 모두 성공하면 `200`, 한쪽만 성공하면 `206`, 둘 다
+사용할 수 없으면 `503`을 반환합니다. 실패한 응답에도 `isAvailable`, `sources`,
+`message` 필드가 포함되어 원인을 확인할 수 있습니다.
 
-## Features
+## 실행 방법
 
-| Endpoint | Response |
-| --- | --- |
-| `GET /` | HTTP 200, `text/html; charset=utf-8`, responsive .NET workbench displaying the public greeting |
-| `GET /health` | HTTP 200, `OK` followed by a newline |
-| Unknown path | HTTP 404 |
-
-`SAMPLE_GREETING` changes the deliberately public greeting. The app does not
-require credentials or expose environment diagnostics. `builder.yaml` describes
-one .NET 10 web component, listening on port 8080 with `/health` as its health
-check. The manifest relies on Builder defaults for root routing, port 8080, and
-HTTP 200 as the successful health-check status.
-
-Open `/` for the visual showcase and template thumbnail view. It uses
-self-contained HTML, CSS, and JavaScript with no external assets or packages.
-The request buttons fetch the actual endpoints and display their status and content
-type. The root request summarizes the returned HTML title and public greeting;
-the health request shows the exact text body. HTML is parsed without executing it
-and the summary is inserted as text. Errors remain visible; the page does not
-report deployment status. The root link remains usable without JavaScript; inspect `/health` with curl when scripts are off. The health control stays inline, with visible errors and retry via the same button.
-
-## Getting Started
-
-### Prerequisites
-
-- Git and a [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
-  on Windows, macOS, or Linux. `global.json` requires SDK `10.0.100` or a later
-  stable .NET 10 feature band; preview SDKs are not selected.
-- For the optional smoke test: Bash and `curl`, with port 8080 available.
-- For deployment: access to the App Service Builder Private Preview, an authorized
-  Azure subscription/resource group, and GitHub source access in the Portal.
-  Use a location available to your preview subscription; this sample does not
-  promise availability in any particular region.
-
-### Installation
-
-Fork [this repository](https://github.com/AzureAppService/app-service-builder-dotnet)
-to your own GitHub account, then clone your fork. Replace `YOUR-GITHUB-USER`:
-
-```sh
-git clone https://github.com/YOUR-GITHUB-USER/app-service-builder-dotnet.git
-cd app-service-builder-dotnet
-dotnet --version
-```
-
-The application and `builder.yaml` are already at the repository root; no archive
-extraction or monorepo subdirectory selection is needed. Keep `global.json`,
-`Directory.Build.props`, and `NuGet.Config` with the project. They isolate SDK
-selection, parent MSBuild properties, and public NuGet sources, respectively.
-The explicit `--configfile NuGet.Config` below avoids inherited package feeds.
-
-### Quickstart: run locally
-
-From the repository root:
+.NET 10 SDK가 필요합니다. 저장소 루트에서 다음을 실행합니다.
 
 ```sh
 dotnet publish -c Release -o bin/sample-publish --configfile NuGet.Config
 dotnet bin/sample-publish/BuilderDotnetSample.dll
 ```
 
-In another terminal:
+서버는 `http://localhost:8080`에서 시작됩니다.
 
 ```sh
-curl -i http://localhost:8080/
-curl -i http://localhost:8080/health
-curl -i http://localhost:8080/not-found
+curl http://localhost:8080/
+curl http://localhost:8080/health
+curl http://localhost:8080/api/dashboard
+curl http://localhost:8080/api/weather
+curl http://localhost:8080/api/exchange-rates
 ```
 
-Expect the responses in the table above. `Program.cs` explicitly binds
-`http://0.0.0.0:8080`; changing `PORT` or `ASPNETCORE_URLS` does not change that
-binding. Stop the local process with Ctrl+C.
-
-### Local validation
-
-On macOS, Linux, or a Bash environment with the required tools:
+`Program.cs`가 명시적으로 포트 8080에 바인딩합니다. 다른 포트를 잠시 사용할
+때는 환경의 Kestrel 엔드포인트 설정을 사용할 수 있습니다. 저장소의 스모크
+테스트는 이를 사용합니다.
 
 ```sh
 bash scripts/smoke-test.sh
+SMOKE_TEST_PORT=8097 bash scripts/smoke-test.sh
 ```
 
-The script publishes independently, starts and stops only its own processes, and
-checks root HTML, encoded greeting content, exact health bodies, query strings,
-unsupported POST/HEAD methods (405), and HTTP 404 (including the removed showcase route)
-with unset, empty, customized, and HTML-sensitive `SAMPLE_GREETING` values.
-It uses port 8080 by default; stop your earlier local run first. If another
-application owns that port, run `SMOKE_TEST_PORT=8097 bash scripts/smoke-test.sh`
-with an available port. That test-only Kestrel endpoint override checks HTTP
-behavior on loopback; it does not verify the normal port 8080 binding.
-The GitHub Actions workflow runs the same check on pull requests and changes to
-`main`. Generated `bin/` and `obj/` files are not committed.
+## 데이터 출처와 표시 기준
 
-## Demo
+- 날씨: [Open-Meteo](https://open-meteo.com/) 예보 API, `Asia/Seoul`
+- 환율: [Frankfurter v1](https://frankfurter.dev/v1/), 외화 1단위당 원화
+- 엔화는 화면에서 `100 JPY` 기준으로 표시하며 API의 `krwPerUnit`은 1엔 기준입니다.
+- 환율은 최신 영업일 데이터이므로 주말·공휴일에는 실시간 거래 시세가 아닐 수 있습니다.
 
-### Deploy your fork through the Portal
+외부 서비스 연결 실패는 별도 가짜 데이터로 대체하지 않습니다. 서버는 오류를
+기록하고 API와 화면에 사용 불가 상태를 명시합니다. 환율은 금융 거래 기준 시세가
+아니므로 실제 거래에는 금융기관 고시 환율을 확인해야 합니다.
 
-Follow the [Portal quickstart](https://builder.appservice.azure.com/docs/quickstarts/portal/)
-for the currently available Private Preview experience.
+## 배포
 
-1. Ensure your fork's `main` branch contains the sample files. Open the App Service
-   Builder Portal and create an app in your authorized subscription and resource
-   group, using a location available to your preview subscription.
-2. Authorize GitHub source access through the Portal. Select **your fork**, its
-   **main** branch, and the **repository root** as the source root. Keep
-   `builder.yaml` at that root. Do not select the upstream repository if you plan
-   to change and deploy your own code.
-3. Explicitly start a deployment using the Portal's deploy action. Wait for a
-   successful terminal deployment state; source authorization or saving a source
-   selection alone does not prove that an app is running.
-4. Open the runtime URL shown for your app. Verify `/` returns the HTML workbench
-   and public greeting, and `/health` returns HTTP 200 with `OK`. If deployment fails, inspect its logs
-   before retrying; do not treat an accepted request as successful deployment.
+`builder.yaml`은 .NET 10 웹 컴포넌트, 포트 8080, `/health` 헬스 체크를 설정합니다.
+App Service Builder로 배포할 때 저장소 루트를 소스 루트로 선택하고 명시적으로
+배포합니다.
 
-The manifest selects .NET platform version `"10"` and the standard publish path,
-with no custom build command or output override. The start command is
-`dotnet BuilderDotnetSample.dll`. Local publish validates that assembly name, not
-the build image or live deployment pipeline.
+## 라이선스
 
-### Change and redeploy
-
-For a code change, edit your fork, commit, and push to the configured `main`
-branch. Then explicitly deploy in the Portal, wait for successful completion,
-and verify the root and health endpoints again. Pushing source by itself is not
-a deployment.
-
-To try a different public greeting locally, stop the app first and run:
-
-```sh
-SAMPLE_GREETING="Welcome" dotnet bin/sample-publish/BuilderDotnetSample.dll
-```
-
-`GET /` now returns HTML displaying `Welcome`. Unset or empty values use `Hello`.
-The greeting is HTML-encoded as text. **Never put a secret in
-`SAMPLE_GREETING`: its value is returned publicly without authentication.**
-
-For a deployed app, add `SAMPLE_GREETING` in Portal **Variables**. **Save only**
-persists desired values but does not change a running version; explicitly deploy
-to apply them. **Save and deploy** captures them in a new version. Wait for
-completion and verify the greeting. Activating a retained version uses that
-version's historical values. See the
-[variables guide](https://builder.appservice.azure.com/docs/guides/variables/).
-Do not override the reserved `PORT` variable.
-
-### Cleanup
-
-Stop a local run with Ctrl+C. When finished with the preview, delete **only the
-app you created** through the Portal, confirm its identity, and wait for deletion
-to complete. Do not delete shared resource groups or unrelated resources. App
-deletion does not remove your fork or separate resources.
-
-## Resources
-
-- [App Service Builder documentation](https://builder.appservice.azure.com/docs/)
-- [Portal quickstart](https://builder.appservice.azure.com/docs/quickstarts/portal/)
-- [Samples](https://builder.appservice.azure.com/docs/samples/)
-- [Runtime requirements](https://builder.appservice.azure.com/docs/reference/runtimes/)
-- [Variables guide](https://builder.appservice.azure.com/docs/guides/variables/)
-- [Contributing](CONTRIBUTING.md) and [Microsoft Open Source Code of Conduct](.github/CODE_OF_CONDUCT.md)
-- [MIT license](LICENSE.md)
-
-For security concerns, follow the [Microsoft Security Response Center reporting
-guidance](https://www.microsoft.com/msrc/faqs-report-an-issue) rather than opening
-a public issue containing sensitive information.
-
-The product mark uses the supplied App Service Builder asset in `assets/AppServiceBuilder.svg`. Its SVG is inlined in the root page to preserve the existing routes and security policy. Keep the inline copy and asset in sync when updating the logo.
-
-Official ecosystem logo sources and trademark notices are documented in
-[assets/NOTICE.md](assets/NOTICE.md). Artwork is stored locally and inlined;
-no remote image or font requests are needed to render the root page.
+[MIT](LICENSE.md)

@@ -1,74 +1,68 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-13T16:10:46.588545+00:00",
-  "title": "Design System: .NET workbench",
+  "generatedAt": "2026-11-24T00:00:00+00:00",
+  "title": "Design System: 대한민국 날씨와 환율",
   "extensions": {
-    "motion": [],
+    "motion": [
+      "prefers-reduced-motion"
+    ],
     "breakpoints": [
       {
-        "name": "compact-desktop-max",
-        "value": "900px"
+        "name": "tablet-max",
+        "value": "980px"
       },
       {
         "name": "mobile-max",
-        "value": "600px"
+        "value": "720px"
+      },
+      {
+        "name": "compact-mobile-max",
+        "value": "440px"
       }
     ]
   },
   "components": [
     {
-      "name": "Request button",
-      "kind": "button",
-      "refersTo": "request-button",
-      "description": "Outlined action for a real user-triggered HTTP request.",
-      "html": "<button>Run <span aria-hidden=\"true\">\u2197</span></button>",
-      "css": "button { font:inherit; cursor:pointer; }\nbutton:hover { background:var(--soft); }\nbutton:disabled { opacity:.6; cursor:wait; }"
-    },
-    {
-      "name": "Section navigation",
-      "kind": "nav",
-      "description": "Same-page links on a pale lavender rail, with no invented selected state.",
-      "html": "<aside class=\"rail\"><nav aria-label=\"On this page\"><a href=\"#overview\">Overview</a><a href=\"#endpoints\">HTTP endpoints</a><a href=\"#next-steps\">Next steps</a></nav></aside>",
-      "css": ".rail nav { display:grid; gap:8px; margin-top:42px; }\n.rail nav a { display:flex; gap:12px; padding:10px 12px; border-radius:9px; color:#536280; }\n.rail nav a:hover { background:#e4e0f6; }"
-    },
-    {
-      "name": "GET badge",
-      "kind": "chip",
-      "description": "Noninteractive HTTP method label.",
-      "html": "<span class=\"method\">GET</span>",
-      "css": ".method { background:#eeebfc; color:#6252bd; border-radius:7px; padding:3px 7px; text-align:center; font:600 11px/1.7 Consolas,monospace; }"
-    },
-    {
-      "name": "Greeting field",
+      "name": "Weather card",
       "kind": "card",
-      "refersTo": "greeting",
-      "description": "Pale lavender response field; Hello is the sample default, not live snippet data.",
-      "html": "<div class=\"greeting\"><div class=\"response-label\"><span>Public greeting</span><code>GET /</code></div><h2>Hello</h2><p>App Service Builder / dotnet-web</p><p class=\"public-note\">Rendered from SAMPLE_GREETING. Defaults to Hello.</p></div>",
-      "css": ".greeting { padding:25px 29px; min-height:255px; background:radial-gradient(ellipse at 0 90%,#e5eefd,transparent 75%),#f5f2fd; display:flex; flex-direction:column; align-items:flex-start; }\n.response-label { display:flex; justify-content:space-between; gap:14px; width:100%; font-size:11px; color:#625291; }\n.greeting h2 { margin:26px 0 22px; font-size:68px; font-weight:650; line-height:1.1; color:#493777; max-width:100%; overflow-wrap:anywhere; }\n.greeting p { margin:auto 0 0; font-size:12px; color:#5c6d89; }\n.greeting .public-note { font-size:10px; margin-top:6px; }"
+      "description": "Responsive location card with current condition and today's key weather facts.",
+      "html": "<article class=\"weather-card\"><h3>서울특별시</h3><p class=\"temperature\">12°</p><p>대체로 맑음</p></article>",
+      "css": ".weather-card { padding:20px; border:1px solid #dfe3df; border-radius:18px; background:#fff; box-shadow:0 9px 25px #15283a08; }"
     },
     {
-      "name": "Response result",
-      "kind": "custom",
-      "description": "Revealed response surface; example text demonstrates typography only.",
-      "html": "<div class=\"result\"><div class=\"result-heading\">GET /health - HTTP 200</div><pre>OK</pre></div>",
-      "css": ".result { margin-top:14px; padding:17px 20px; border:1px solid #dce3f1; border-radius:14px; background:linear-gradient(145deg,#f1f5fe,#f1edf9); }\n.result-heading { font-size:12px; font-weight:600; }\n.result pre { margin-top:10px; }\n.result[data-error=\"true\"] { border-color:#ac5a62; background:#fff1f1; color:#8a2931; }"
+      "name": "Refresh control",
+      "kind": "button",
+      "description": "Keyboard-operable action that reloads the current dashboard contract.",
+      "html": "<button class=\"refresh\">↻ 새로고침</button>",
+      "css": ".refresh { min-height:39px; border:1px solid #ffffff32; border-radius:12px; color:#fff; background:#ffffff0b; }"
+    },
+    {
+      "name": "Status banner",
+      "kind": "alert",
+      "description": "Textual partial- or full-failure notice independent of color.",
+      "html": "<div class=\"status-banner\" role=\"status\">날씨 제공 서비스에 일시적으로 연결할 수 없습니다.</div>",
+      "css": ".status-banner { padding:13px 16px; border:1px solid #ddc86a; border-radius:13px; background:#fff9d9; color:#695a1b; }"
     }
   ],
   "narrative": {
-    "northStar": "Daylight-blue and lavender .NET workbench",
-    "overview": "A distinct request-workbench layout within the approved shared daylight sample family. The authoritative implementation is DemoPage.cs.",
+    "northStar": "Information-dense, responsive public data dashboard",
+    "overview": "A navy and warm-paper weather and exchange-rate dashboard with lime accents.",
     "keyCharacteristics": [
-      "Elevated white rounded shell with pale navigation and lavender greeting.",
-      "Official ecosystem and Builder marks with separate documentation links.",
-      "Ruled facts, real endpoint controls and monospaced response details."
+      "17 administrative-region weather cards with current and daily values.",
+      "A clear KRW exchange-rate table and functional conversion panel.",
+      "Explicit loading, partial-success, and external-service failure states."
     ],
-    "rules": [],
+    "rules": [
+      "Do not fabricate data when a provider is unavailable.",
+      "Keep Korean text and responsive card layouts legible without horizontal page overflow."
+    ],
     "dos": [
-      "Retain the shared daylight foundation and distinct .NET workbench layout.",
-      "Preserve real HTTP results and variable greeting wrapping."
+      "Use source names and reference dates alongside displayed data.",
+      "Preserve keyboard focus and reduced-motion behavior."
     ],
     "donts": [
-      "Do not introduce charts, telemetry widgets or simulated success."
+      "Do not present reference rates as executable financial prices.",
+      "Do not require API credentials from the browser."
     ]
   }
 }

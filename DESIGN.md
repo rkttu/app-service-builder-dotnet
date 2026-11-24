@@ -1,115 +1,43 @@
 ---
-name: .NET workbench
-description: Daylight-blue and lavender developer workbench for the ASP.NET sample.
+name: 대한민국 날씨와 환율 대시보드
+description: 정보 밀도가 높은 반응형 공개 데이터 대시보드
 colors:
-  ink: "#23314c"
-  muted: "#5d6d87"
-  accent: "#6250d1"
-  canvas: "#eff3fc"
-  line: "#e4e8f2"
-  white: "#fff"
-  soft: "#f1effb"
-typography:
-  display:
-    fontFamily: '"Segoe UI Variable", "Segoe UI", Arial, sans-serif'
-    fontSize: "68px"
-    fontWeight: 650
-    lineHeight: 1.1
-    letterSpacing: "-.04em"
-  headline:
-    fontFamily: '"Segoe UI Variable", "Segoe UI", Arial, sans-serif'
-    fontSize: "30px"
-    fontWeight: 650
-    lineHeight: 1.08
-    letterSpacing: "-.04em"
-  body:
-    fontFamily: '"Segoe UI Variable", "Segoe UI", Arial, sans-serif'
-    fontSize: "15px"
-    lineHeight: 1.7
-  code:
-    fontFamily: "Consolas, monospace"
-    fontSize: "12px"
-rounded:
-  button: "9px"
-  navigation: "9px"
-  result: "14px"
-  endpoints: "14px"
-  overview: "17px"
-  shell: "24px"
-components:
-  request-button:
-    backgroundColor: "{colors.white}"
-    textColor: "{colors.accent}"
-    rounded: "{rounded.button}"
-    padding: "9px 14px"
-  overview:
-    backgroundColor: "{colors.white}"
-    rounded: "{rounded.overview}"
-  greeting:
-    backgroundColor: "#f5f2fd"
-    textColor: "#493777"
-    padding: "25px 29px"
+  navy: "#122238"
+  ink: "#1c2938"
+  canvas: "#f7f6f1"
+  line: "#dfe3df"
+  accent: "#dff06b"
 ---
 
-# Design System: .NET workbench
+# Design System
 
 ## Overview
 
-The implemented `/` page in `DemoPage.cs` belongs to the approved soft daylight
-sample family while retaining its structured .NET request-workbench layout.
-A blue/lavender canvas surrounds an elevated white shell. A pale navigation
-rail, lavender greeting field, ruled facts, and monospaced HTTP details keep
-the content distinct from a centered hello-world sample.
+메인 화면은 짙은 네이비 히어로와 따뜻한 종이색 콘텐츠 영역이 대비되는
+정보 대시보드입니다. 라임은 현재 날짜, 주요 수치, 액션에만 사용하여 데이터의
+우선순위를 명확하게 합니다.
 
-Official .NET and App Service Builder artwork is local and inlined. Sources
-and trademark notices are in [assets/NOTICE.md](assets/NOTICE.md). ASP.NET
-and Builder documentation are explicitly separate navigation links.
+## Layout
 
-## Layout and depth
+데스크톱 날씨 카드는 4열, 태블릿은 3열, 모바일은 2열 후 440px 이하에서 1열로
+변환됩니다. 환율 표와 계산기는 데스크톱에서 나란히 배치되고 작은 화면에서는
+표 아래에 계산기가 이어집니다.
 
-Desktop uses a 210px rail inside a 1230px maximum-width shell, with 35px
-workspace padding. Greeting and facts share a rounded 1.55:1 overview. Endpoint
-rows align method, path, description, and action. The white shell uses a soft
-shadow; inner surfaces use thin borders and restrained tonal gradients.
+최대 콘텐츠 폭은 1180px입니다. 핵심 정보는 24px 이하의 수평 여백을 유지하며,
+카드는 18~22px 둥근 모서리와 낮은 고도 그림자를 사용합니다.
 
-At 900px, the rail narrows to 175px, workspace padding becomes 25px, and the
-overview stacks. At 600px, the rail becomes a top navigation band, workspace
-padding becomes 21px, and endpoint descriptions move beneath their paths.
-The 19px mobile shell keeps the request controls at the right. Navigation
-symbols and the rail footnote are hidden on mobile.
+## Interaction and states
 
-## Typography and shapes
+지역 검색은 클라이언트에서 즉시 필터링합니다. 새로고침 중에는 버튼을 비활성화하고,
+초기 로딩에는 카드 스켈레톤을 표시합니다. 외부 데이터 소스별 실패는 상단 상태
+배너와 해당 섹션의 빈 상태로 함께 전달합니다.
 
-System sans-serif type carries the hierarchy through size, weight and spacing.
-The greeting is 68px, the page title 30px, and section headings 18px. Supporting
-text is primarily 11–13px. HTTP paths and response bodies use Consolas.
-Mobile greeting and page-title sizes are 58px and 26px. Variable greeting and
-response content wraps anywhere rather than overflowing.
+환율 계산기는 원화 입력값을 선택한 외화의 `krwPerUnit`으로 나눕니다. 엔화 표는
+가독성을 위해 100엔 기준으로 보여 주지만 계산 로직은 1엔 기준 값을 사용합니다.
 
-Surfaces use 14–24px corner rounding; outlined request controls use 9px rounding
-and a minimum 40px height. Method labels are noninteractive, lavender-backed
-monospace badges. Navigation anchors do not imply selected or telemetry state.
+## Accessibility
 
-## Request controls and customization
-
-Both controls call existing local endpoints and are disabled while a request
-is pending. The initially hidden, live result surface displays real status,
-content type, and a wrapping text body. Root requests summarize the fetched
-HTML title and public greeting without executing or inserting returned HTML.
-Health requests display the exact text body inline; they do not navigate or
-download it. Errors stay visible and the same control can retry.
-
-The customization disclosure names `SAMPLE_GREETING` and its source files,
-explains public-value and redeployment behavior, and does not infer a user's
-fork or edit deployment settings. Local responses do not verify Azure readiness.
-
-## Accessibility and motion
-
-Focus-visible uses a 3px violet outline with 4px offset. A skip link appears
-on focus; buttons and disclosures are keyboard-operable. Error wording and
-visible results communicate state independently of color. Reduced-motion
-users receive no control animation or smooth-scroll requirement.
-
-Retain factual content, official artwork, variable-value wrapping and real
-responses. Additional charts, monitoring state, or simulated success do not
-belong in this sample.
+모든 입력과 링크는 키보드 포커스 표시를 가지며, 오류 상태는 텍스트로 전달합니다.
+날씨·환율 갱신 영역은 `aria-live`를 사용하고, 자동 애니메이션은
+`prefers-reduced-motion`에서 비활성화됩니다. 날씨 아이콘은 보조 텍스트 없이도
+이해할 수 있도록 상태 문구와 함께 제공합니다.
